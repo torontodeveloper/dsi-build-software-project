@@ -1,0 +1,4 @@
+color: red
+api_key: "5e0G46CCuiD1ljT2WPIv4LoM2ovGEXrw"
+url: "https://api.nytimes.com/svc/search/v2/"
+topic: "movies"
