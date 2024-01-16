@@ -1,32 +1,95 @@
-from typing import Any,Optional
+from typing import Any, Optional
 import argparse
 import yaml
+import requests
+import matplotlib.pyplot as plt
 
 class Analysis():
-    def __init__(self,analysis_config:str):
-        CONFIG_PATHS =['system_config.yml','user_config.yml','job_config.yml']
-        parser = argparse.ArgumentParser()
-        parser.add_argument('job_config',type=str)
-
+    def __init__(self, analysis_config: str):
+        CONFIG_PATHS =['system_config.yml', 'user_config.yml', 'job_config.yml']
+        parser = argparse.ArgumentParser(description='Analysis package')
+        parser.add_argument('job_config', type=str)
         args = parser.parse_args()
         paths_to_load = CONFIG_PATHS + [args.job_config]
-        print(args)
 
         config = {}
-
         for path in paths_to_load:
-            print('Loading',path)
-        with open(path,'r') as file:
-            this_config = yaml.safe_load(file)
-            print('this config',this_config)
-        
-        config.update(this_config)
-    
-    def load_data(self,):
-        pass
-    def compute_analysis(self) -> Any:
-        pass
-    
-    def plot_data(self,save_path:Optional[str] = None) -> matplotlib.Figure:
-        pass
-        
+            with open(path, 'r') as file:
+                this_config = yaml.safe_load(file)
+            
+            # Check if this_config is not None before updating config
+            if this_config:
+                config.update(this_config)
+
+        topic = "artificial intelligence"
+        self.url = (
+            config["url"]
+            + 'articlesearch.json?q='
+            + topic
+            + '&api-key='
+            + config["api_key"]
+        )
+
+    def load_data(self):
+        all_articles = []
+        page = 0
+
+        while True:
+            # Add 'page' parameter to the URL for pagination
+            url_with_page = f"{self.url}&page={page}"
+            response = requests.get(url_with_page)
+            json_resp = response.json()
+            articles = json_resp.get("response", {}).get("docs", [])
+
+            # Break the loop if no more articles are returned
+            if not articles:
+                break
+
+            # Extend the list of articles with the new results
+            all_articles.extend(articles)
+            page += 1
+
+        return all_articles
+
+
+    def extract_year_from_pub_date(self, pub_date):
+        return pub_date.split("-")[0] if pub_date else None
+
+    def plot_data(self, save_path: Optional[str] = None):
+        articles = self.load_data()
+
+        # Extract the publication year for each article
+        years = [self.extract_year_from_pub_date(article.get("pub_date", "")) for article in articles]
+
+        # Print list of titles and years
+        print("List of Titles and Years:")
+        for article in articles:
+            title = article.get("headline", {}).get("main")
+            pub_year = self.extract_year_from_pub_date(article.get("pub_date", ""))
+            print(f"Title: {title}, Year: {pub_year}")
+
+        # Count the occurrences of each year
+        year_counts = {year: years.count(year) for year in set(years)}
+
+        # Prepare data for plotting
+        sorted_years = sorted(year_counts.keys())
+        article_counts = [year_counts[year] for year in sorted_years]
+
+        # Create a bar plot
+        plt.bar(sorted_years, article_counts)
+        plt.xlabel("Year")
+        plt.ylabel("Number of Articles")
+        plt.title(f"Number of Articles with 'Artificial Intelligence' in Title per Year")
+        plt.show()
+
+# Test the class and plot the graph
+analysis = Analysis('test')
+analysis.plot_data()
+
+
+job_config = [
+    {'color': 'red'},
+    {'api_key': "5e0G46CCuiD1ljT2WPIv4LoM2ovGEXrw"},
+    {'topic': "artificial intelligence"},
+    {'url': "https://api.nytimes.com/svc/search/v2/"}
+]
