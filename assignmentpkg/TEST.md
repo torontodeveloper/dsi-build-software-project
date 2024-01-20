@@ -1,4 +1,4 @@
-Tests for Analysis Package
+# Tests for Analysis Package
 
 Introduction
 This document outlines the testing strategy for the Analysis package, which interacts with the New York Times API and performs data analysis.
