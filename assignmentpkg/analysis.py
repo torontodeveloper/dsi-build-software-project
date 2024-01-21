@@ -63,6 +63,14 @@ class Analysis():
 
         return all_articles
 
+    def compute_analysis(self):
+        articles = self.load_data()
+
+        # Calculate mean word count
+        word_counts = [article.get("word_count", 0) for article in articles]
+        mean_word_count = sum(word_counts) / len(word_counts) if len(word_counts) > 0 else 0
+
+        print(f"Mean Word Count of Articles: {mean_word_count}")
 
     def extract_year_from_pub_date(self, pub_date):
         return pub_date.split("-")[0] if pub_date else None
