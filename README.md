@@ -10,9 +10,9 @@ The package requires the following Python libraries:
 
 requests: For making API requests. PyYAML: For handling YAML configuration files. numpy: For numerical operations. matplotlib: For generating plots. scipy: For statistical functions. 
 
-To install these, run pip install -r requirements.txt.
+To install these,
 
-python analysis.py job_config.yml
+pip install git+https://github.com/torontodeveloper/dsi-build-software-project 
 
 # Usage
 After setting up your API key in the configuration files, you can use the package to fetch articles, analyze data, and plot results.
