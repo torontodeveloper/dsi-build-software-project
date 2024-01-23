@@ -28,3 +28,9 @@ New York Times API - For providing the API used in this example. Feel free to mo
 # Steps to use
 
 pip install git+https://github.com/torontodeveloper/dsi-build-software-project
+
+from assignmentpkg import analysis
+
+obj = analysis('test')
+obj.plot_data()
+# this will plot the articles
