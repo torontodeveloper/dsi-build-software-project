@@ -31,6 +31,8 @@ pip install git+https://github.com/torontodeveloper/dsi-build-software-project
 
 from assignmentpkg import analysis
 
+## instantiate the class
 obj = analysis('test')
+## invoke plot
 obj.plot_data()
-# this will plot the articles
+
